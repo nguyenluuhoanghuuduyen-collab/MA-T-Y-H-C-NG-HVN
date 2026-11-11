@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nói không với ma túy | THPT Huỳnh Văn Nghệ</title>
+<meta name="description" content="Web App giáo dục nói không với ma túy: trò chơi, tình huống, kỹ năng, góc viết và cố vấn ngoại tuyến.">
+<style>
+:root{
+  --navy:#073b71;--blue:#0b78d0;--sky:#eaf6ff;--red:#e51c23;--green:#158f4a;
+  --ink:#14324d;--muted:#60758a;--line:#d9e7f3;--card:#fff;--bg:#f5f9fd;--gold:#f2b705;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:Arial,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.topbar{
+ position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--line);box-shadow:0 5px 18px #0b47740d
+}
+.nav{max-width:1240px;margin:auto;padding:10px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:9px;font-weight:900;color:var(--red);margin-right:auto}
+.logo-badge{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--navy));display:grid;place-items:center;color:white}
+.nav button{border:0;background:#edf6fd;color:var(--navy);padding:9px 12px;border-radius:11px;font-weight:700}
+.nav button:hover{background:#dbeefd}
+.nav .danger{background:#fff1f1;color:var(--red)}
+main{max-width:1240px;margin:auto;padding:20px 16px 60px}
+.view{display:none}.view.active{display:block}
+.cover-wrap{position:relative;border-radius:24px;overflow:hidden;box-shadow:0 18px 50px #1f5b8b22;border:1px solid var(--line);background:#fff}
+.cover-wrap img{display:block;width:100%;height:auto}
+.hotspot{position:absolute;z-index:5;border:2px solid transparent;border-radius:18px;background:transparent;cursor:pointer}
+.hotspot:hover{border-color:rgba(255,255,255,.95);box-shadow:0 0 0 4px rgba(11,120,208,.28) inset;background:rgba(255,255,255,.05)}
+.hotspot.poster{left:74.5%;top:15%;width:23.5%;height:49%}
+.hotspot.pdf{left:2.8%;top:78.5%;width:27.2%;height:11.3%}
+.hotspot.excel{left:31.2%;top:78.5%;width:31.5%;height:11.3%}
+.hotspot.media{left:64.2%;top:78.5%;width:32.5%;height:11.3%}
+.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+.qa{background:white;border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 20px #17324d0a;cursor:pointer;transition:.18s}
+.qa:hover{transform:translateY(-2px);box-shadow:0 12px 26px #17324d18;border-color:#acd2ee}
+.qa .ico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:#eaf5ff;font-size:24px}
+.qa h3{margin:0 0 4px;color:var(--navy);font-size:16px}
+.qa p{margin:0;color:var(--muted);font-size:13px}
+.section-title{font-size:30px;color:var(--navy);margin:8px 0 16px}
+.lead{color:var(--muted);font-size:17px;line-height:1.65}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 8px 22px #17324d0b}
+.card h3{color:var(--navy);margin-top:0}
+.card-accent{border-top:5px solid var(--blue)}
+.notice{background:#fff8e7;border:1px solid #f6df9b;padding:14px;border-radius:14px;color:#6c5510}
+.btn{border:0;border-radius:12px;padding:10px 14px;font-weight:800}
+.primary{background:var(--blue);color:#fff}.red{background:var(--red);color:#fff}.green{background:var(--green);color:#fff}
+.soft{background:#edf6fd;color:var(--navy)} .outline{background:#fff;border:1px solid var(--line);color:var(--navy)}
+input,textarea,select{width:100%;border:1px solid #cbdbea;border-radius:12px;padding:11px;background:#fff}
+textarea{min-height:100px;resize:vertical}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.step{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;text-align:center}
+.step .n{width:44px;height:44px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;margin:auto;font-weight:900}
+.choice{display:block;width:100%;text-align:left;margin:9px 0;background:#f4f9fd;border:1px solid var(--line);padding:11px;border-radius:12px}
+.choice:hover{background:#e9f5ff}
+.feedback{margin-top:10px;padding:12px;border-radius:12px;background:#f5fbff;border-left:4px solid var(--blue)}
+.progress{height:12px;border-radius:999px;background:#e3edf5;overflow:hidden}.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--blue),#23a6e6)}
+.bigscore{font-size:42px;font-weight:900;color:var(--green)}
+.poster-zone{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+.upload-box{border:2px dashed #b8cde0;background:#f7fbff;border-radius:18px;padding:20px;text-align:center;min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.upload-box img{max-width:100%;max-height:320px;border-radius:14px;display:none}
+.student-table{width:100%;border-collapse:collapse;background:#fff}
+.student-table th,.student-table td{border:1px solid #d9e7f3;padding:9px;text-align:left}
+.student-table th{background:#eaf4fb;color:var(--navy)}
+.table-wrap{overflow:auto;border-radius:14px;border:1px solid var(--line)}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat{background:white;border:1px solid var(--line);border-radius:16px;text-align:center;padding:18px}.stat b{display:block;font-size:32px;color:var(--blue)}
+.certificate{margin-top:16px;border:3px solid var(--navy);border-radius:20px;padding:26px;background:linear-gradient(135deg,#fff,#eef8ff);text-align:center}
+.certificate h2{color:var(--red);font-size:30px;margin:6px}
+.small{font-size:13px;color:var(--muted)}
+.footer{margin-top:34px;padding:20px;border-radius:18px;background:var(--navy);color:#fff;text-align:center}
+@media(max-width:900px){
+ .quick-actions,.grid,.steps,.stat-grid,.form-grid,.poster-zone{grid-template-columns:1fr}
+ .nav{justify-content:center}.logo{width:100%;justify-content:center;margin:0 0 4px}
+}
+@media print{
+ .topbar,.no-print,.footer{display:none!important}
+ body{background:#fff}
+ main{max-width:none;padding:0}
+ .view{display:none!important}
+ #report.view{display:block!important}
+ .card{box-shadow:none}
+}
+
+.api-status{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:#f4f8fb;border:1px solid var(--line);margin-top:10px}
+.dot{width:10px;height:10px;border-radius:50%;background:#9aa9b7;display:inline-block}
+.dot.ok{background:#18a558}.dot.bad{background:#d62828}
+.chat-wrap{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.chat-head{padding:14px 16px;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;font-weight:800}
+.chat-log{min-height:260px;max-height:480px;overflow:auto;padding:16px;background:#f8fbfe}
+.msg{max-width:86%;padding:11px 13px;border-radius:14px;margin:9px 0;white-space:pre-wrap;line-height:1.5}
+.msg.user{margin-left:auto;background:#dff1ff;border:1px solid #b8ddf6}
+.msg.ai{margin-right:auto;background:#fff;border:1px solid var(--line)}
+.msg.system{margin:6px auto;background:#fff8e7;border:1px solid #f2dda3;color:#6c5510;max-width:95%}
+.api-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mask-row{display:flex;gap:8px;align-items:center}.mask-row input{flex:1}
+@media(max-width:900px){.api-grid{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<div class="topbar no-print">
+  <div class="nav">
+    <div class="logo"><span class="logo-badge">🛡️</span> NÓI KHÔNG VỚI MA TÚY</div>
+    <button onclick="show('home')">Trang chủ</button>
+    <button onclick="show('knowledge')">Hiểu đúng</button>
+    <button onclick="show('scenario')">Tình huống</button>
+    <button onclick="show('skills')">Kỹ năng</button>
+    <button onclick="show('quiz')">Trò chơi</button>
+    <button onclick="show('writing')">Góc viết</button>
+    <button onclick="show('ai')">Cố vấn AI</button>
+    <button onclick="show('api')">⚙️ Cài đặt API</button>
+    <button onclick="show('media')">Ảnh / Poster</button>
+    <button onclick="show('students')">Danh sách HS</button>
+    <button onclick="show('commit')">Cam kết</button>
+    <button onclick="show('teacher')">Giáo viên</button>
+    <button id="soundToggle" onclick="toggleSound()" aria-label="Bật tắt âm thanh">🔊 Âm thanh: Bật</button>
+  </div>
+</div>
+
+<main>
+<section id="home" class="view active">
+  <div class="cover-wrap">
+    <img src="assets/anh-bia.jpg" alt="Ảnh bìa Nói không với ma túy - Trường THPT Huỳnh Văn Nghệ">
+  </div>
+  <div class="quick-actions">
+    <div class="qa" onclick="show('students')"><div class="ico">🎓</div><div><h3>Khối 10</h3><p>Học sinh THPT Huỳnh Văn Nghệ</p></div></div>
+    <div class="qa" onclick="show('media')"><div class="ico">🖼️</div><div><h3>Góc hình ảnh</h3><p>Chèn poster, ảnh hoạt động tuyên truyền</p></div></div>
+    <div class="qa" onclick="show('teacher')"><div class="ico">📄</div><div><h3>Xuất PDF</h3><p>In báo cáo hoặc lưu dưới dạng PDF</p></div></div>
+    <div class="qa" onclick="show('students')"><div class="ico">📊</div><div><h3>Excel HS</h3><p>Quản lý và xuất danh sách học sinh</p></div></div>
+  </div>
+  <div class="card card-accent" style="margin-top:18px">
+    <h2 style="color:var(--navy);margin-top:0">Mục tiêu của web app</h2>
+    <p class="lead">Giúp học sinh khối 10 nhận diện quan niệm sai lệch về ma túy, biết phản biện bằng lí lẽ và nguồn tin cậy, luyện kỹ năng nói “không”, rời khỏi tình huống nguy cơ, tìm người hỗ trợ và lan tỏa lối sống lành mạnh.</p>
+    <button class="btn red" onclick="show('scenario')">Bắt đầu hành trình</button>
+  </div>
+</section>
+
+<section id="knowledge" class="view">
+  <h2 class="section-title">Hiểu đúng – Phá bỏ quan niệm sai</h2>
+  <div class="notice">Học sinh chọn “Đúng / Sai / Cần kiểm chứng”, sau đó xem phản hồi. Không nên sử dụng thông tin chưa được kiểm chứng.</div>
+  <div id="mythList" class="grid" style="margin-top:16px"></div>
+</section>
+
+<section id="scenario" class="view">
+  <h2 class="section-title">Tình huống tương tác – Em sẽ chọn gì?</h2>
+  <div class="card">
+    <div id="scenarioText" style="font-size:21px;font-weight:800;margin-bottom:12px"></div>
+    <div id="scenarioChoices"></div>
+    <div id="scenarioFeedback" class="feedback" style="display:none"></div>
+    <button class="btn primary" style="margin-top:12px" onclick="nextScenario()">Tình huống tiếp theo</button>
+  </div>
+</section>
+
+<section id="skills" class="view">
+  <h2 class="section-title">Kỹ năng từ chối an toàn</h2>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>NÓI KHÔNG</h3><p>Rõ ràng, bình tĩnh, dứt khoát.</p></div>
+    <div class="step"><div class="n">2</div><h3>NÊU LÍ DO</h3><p>Ngắn gọn, không tranh cãi kéo dài.</p></div>
+    <div class="step"><div class="n">3</div><h3>RỜI ĐI</h3><p>Thoát khỏi tình huống có nguy cơ.</p></div>
+    <div class="step"><div class="n">4</div><h3>TÌM TRỢ GIÚP</h3><p>Liên hệ người lớn đáng tin cậy.</p></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>Luyện câu từ chối</h3>
+    <p><b>Tình huống:</b> “Thử một lần cho biết, có gì đâu!”</p>
+    <textarea id="refuseInput" placeholder="Viết câu từ chối của em..."></textarea>
+    <button class="btn primary" onclick="analyzeRefusal()">Phân tích</button>
+    <div id="refuseResult" class="feedback" style="margin-top:12px;display:none"></div>
+  </div>
+</section>
+
+<section id="quiz" class="view">
+  <h2 class="section-title">Trò chơi 10 câu – Lựa chọn an toàn</h2>
+  <div class="card">
+    <div class="progress"><div id="quizBar"></div></div>
+    <p id="quizCounter" class="small"></p>
+    <div id="quizQuestion" style="font-size:20px;font-weight:800"></div>
+    <div id="quizChoices"></div>
+    <div id="quizFeedback" class="feedback" style="display:none"></div>
+    <button id="quizNext" class="btn primary" style="display:none;margin-top:12px" onclick="nextQuiz()">Câu tiếp theo</button>
+    <div id="quizFinal"></div>
+  </div>
+</section>
+
+<section id="writing" class="view">
+  <h2 class="section-title">Góc viết – Bài văn thuyết phục</h2>
+  <div class="card">
+    <label><b>Đề bài</b></label>
+    <select id="topic">
+      <option>Thuyết phục một người bạn từ bỏ suy nghĩ “thử ma túy một lần không sao”</option>
+      <option>Không dùng chất lạ để thể hiện bản thân</option>
+    </select>
+    <div class="form-grid" style="margin-top:14px">
+      <div><label>Vấn đề</label><textarea id="w1"></textarea></div>
+      <div><label>Luận điểm</label><textarea id="w2"></textarea></div>
+      <div><label>Lí lẽ</label><textarea id="w3"></textarea></div>
+      <div><label>Bằng chứng / nguồn</label><textarea id="w4"></textarea></div>
+      <div><label>Bác bỏ quan niệm sai</label><textarea id="w5"></textarea></div>
+      <div><label>Giải pháp / lời kêu gọi</label><textarea id="w6"></textarea></div>
+    </div>
+    <div style="margin-top:12px">
+      <button class="btn primary" onclick="buildOutline()">Tạo dàn ý</button>
+      <button class="btn soft" onclick="saveWriting()">Lưu</button>
+      <button class="btn outline" onclick="clearWriting()">Xóa</button>
+    </div>
+    <div id="outline" class="feedback" style="margin-top:14px;white-space:pre-wrap"></div>
+  </div>
+</section>
+
+
+<section id="ai" class="view">
+  <h2 class="section-title">Cố vấn AI – Hỗ trợ học sinh, con người kiểm soát</h2>
+  <div class="notice">
+    AI chỉ hỗ trợ gợi ý luận điểm, câu hỏi phản biện và cách diễn đạt. Không nhập dữ liệu cá nhân nhạy cảm; luôn kiểm chứng thông tin trước khi sử dụng.
+  </div>
+  <div class="chat-wrap" style="margin-top:14px">
+    <div class="chat-head">🤖 Cố vấn AI phòng, chống ma túy – Ngữ văn 10</div>
+    <div id="chatLog" class="chat-log">
+      <div class="msg system">Hãy chọn một yêu cầu mẫu hoặc nhập câu hỏi. Cần cài API trước khi dùng.</div>
+    </div>
+    <div style="padding:14px">
+      <label><b>Gợi ý nhanh</b></label>
+      <select id="quickPrompt" onchange="useQuickPrompt()">
+        <option value="">-- Chọn yêu cầu mẫu --</option>
+        <option>Gợi ý 3 luận điểm thuyết phục một người bạn từ bỏ suy nghĩ “thử ma túy một lần không sao”.</option>
+        <option>Đặt 3 câu hỏi phản biện để kiểm tra một quan niệm sai lệch về ma túy.</option>
+        <option>Gợi ý một câu từ chối rõ ràng, dứt khoát và an toàn khi bị rủ rê dùng chất lạ.</option>
+        <option>Nhận xét đoạn văn thuyết phục của em theo các tiêu chí: luận điểm, lí lẽ, bằng chứng, giải pháp.</option>
+        <option>Gợi ý dàn ý ngắn cho bài viết thuyết phục bạn bè nói không với ma túy.</option>
+      </select>
+      <textarea id="aiQuestion" placeholder="Nhập câu hỏi hoặc dán đoạn văn cần AI góp ý..." style="margin-top:10px;min-height:120px"></textarea>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn primary" onclick="askAI()">Gửi cho AI</button>
+        <button class="btn soft" onclick="clearChat()">Xóa hội thoại</button>
+        <button class="btn outline" onclick="show('api')">⚙️ Cài đặt API</button>
+      </div>
+      <div id="aiUseStatus" class="api-status"><span class="dot"></span><span>Chưa kiểm tra API.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="api" class="view">
+  <h2 class="section-title">⚙️ Cài đặt khóa API</h2>
+  <div class="notice">
+    GitHub Pages là website công khai và không có máy chủ bảo vệ API Key. KHÔNG nhập API Key dùng chung của trường hoặc của giáo viên trên máy học sinh. Nếu muốn thử bằng khóa cá nhân, khóa chỉ được giữ trong phiên tab hiện tại và sẽ mất khi đóng tab. Dùng Cố vấn ngoại tuyến không cần API để bảo đảm hoạt động cho mọi học sinh.
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="api-grid">
+      <div>
+        <label><b>Nhà cung cấp AI</b></label>
+        <select id="apiProvider" onchange="providerChanged()">
+          <option value="gemini">Google Gemini</option>
+          <option value="openai">OpenAI</option>
+        </select>
+      </div>
+      <div>
+        <label><b>Model</b></label>
+        <select id="apiModel"></select>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <label><b>API Key</b></label>
+      <div class="mask-row">
+        <input id="apiKey" type="password" placeholder="Dán API key tại đây">
+        <button class="btn soft" onclick="toggleKey()">Hiện / Ẩn</button>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <label><b>System prompt cho Cố vấn AI</b></label>
+      <textarea id="systemPrompt" style="min-height:180px">Bạn là cố vấn học tập dành cho học sinh lớp 10 Trường THPT Huỳnh Văn Nghệ trong web app tuyên truyền phòng, chống ma túy và hỗ trợ bài Ngữ văn 10 về viết bài văn thuyết phục người khác từ bỏ một thói quen hoặc quan niệm.
+
+Yêu cầu:
+- Trả lời bằng tiếng Việt, rõ ràng, phù hợp học sinh THPT.
+- Tập trung vào kỹ năng nhận diện nguy cơ, nói không, rời khỏi tình huống nguy cơ và tìm người lớn đáng tin cậy hỗ trợ.
+- Không mô tả cách sử dụng, chế tạo, mua bán hoặc che giấu ma túy.
+- Khi hỗ trợ viết văn: gợi ý luận điểm, lí lẽ, câu hỏi phản biện và cách diễn đạt; không khuyến khích sao chép nguyên văn.
+- Nhắc học sinh kiểm chứng số liệu, nguồn tin và nội dung do AI cung cấp.
+- Không yêu cầu hoặc lưu thông tin cá nhân nhạy cảm.
+- Khuyến khích thái độ tôn trọng, không kỳ thị người có vấn đề liên quan đến chất gây nghiện.</textarea>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+      <button class="btn green" onclick="saveAPISettings()">🔒 Dùng API trong phiên này</button>
+      <button class="btn primary" onclick="testAPI()">🔌 Kiểm tra kết nối</button>
+      <button class="btn outline" onclick="deleteAPISettings()">🗑️ Xóa API</button>
+    </div>
+    <div id="apiStatus" class="api-status"><span class="dot"></span><span>Chưa kiểm tra kết nối.</span></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Lưu ý khi sử dụng</h3>
+    <p class="small">Chế độ Cố vấn ngoại tuyến luôn hoạt động mà không cần API. Tính năng gọi Gemini/OpenAI trực tiếp bằng khóa của người dùng chỉ phù hợp thử nghiệm cá nhân trên thiết bị tin cậy, vẫn có rủi ro lộ khóa và có thể bị giới hạn CORS. Muốn triển khai AI thật cho học sinh, phải dùng một backend riêng để giữ khóa API trên máy chủ, có kiểm soát truy cập, hạn mức và bảo vệ dữ liệu học sinh.</p>
+  </div>
+</section>
+
+<section id="media" class="view">
+  <h2 class="section-title">Góc chèn hình ảnh / poster</h2>
+  <div class="poster-zone">
+    <div class="card">
+      <h3>Tải ảnh / poster từ máy</h3>
+      <div class="upload-box">
+        <img id="posterPreview" alt="">
+        <div id="posterHint">
+          <div style="font-size:54px">🖼️</div>
+          <p>Chọn ảnh hoạt động, poster, sản phẩm tuyên truyền của học sinh.</p>
+        </div>
+        <input id="posterFile" type="file" accept="image/*" onchange="previewPoster(event)">
+      </div>
+      <div style="margin-top:12px">
+        <input id="posterCaption" placeholder="Nhập chú thích ảnh / poster">
+        <button class="btn primary" style="margin-top:10px" onclick="savePoster()">Lưu vào góc tư liệu</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Góc tư liệu đã lưu</h3>
+      <div id="mediaGallery" class="grid" style="grid-template-columns:1fr"></div>
+    </div>
+  </div>
+</section>
+
+<section id="students" class="view">
+  <h2 class="section-title">Danh sách học sinh khối 10</h2>
+  <div class="card">
+    <div class="form-grid">
+      <input id="hsName" placeholder="Họ và tên học sinh">
+      <input id="hsClass" placeholder="Lớp, ví dụ 10A1">
+    </div>
+    <div class="form-grid" style="margin-top:10px">
+      <input id="hsNote" placeholder="Ghi chú">
+      <select id="hsStatus"><option>Đã tham gia</option><option>Chưa tham gia</option><option>Hoàn thành tốt</option></select>
+    </div>
+    <div style="margin-top:12px">
+      <button class="btn green" onclick="addStudent()">+ Thêm học sinh</button>
+      <button class="btn primary" onclick="exportExcel()">Xuất Excel</button>
+      <button class="btn soft" onclick="clearStudents()">Xóa danh sách</button>
+    </div>
+  </div>
+  <div class="table-wrap" style="margin-top:14px">
+    <table class="student-table" id="studentTable">
+      <thead><tr><th>STT</th><th>Họ và tên</th><th>Lớp</th><th>Trạng thái</th><th>Ghi chú</th><th class="no-print">Xóa</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="commit" class="view">
+  <h2 class="section-title">Cam kết – Tôi chọn tương lai</h2>
+  <div class="card">
+    <input id="studentName" placeholder="Họ tên (có thể để trống để ẩn danh)">
+    <div style="margin:14px 0">
+      <label><input type="checkbox" class="ck" value="Không thử"> Không thử</label><br>
+      <label><input type="checkbox" class="ck" value="Không dùng"> Không dùng</label><br>
+      <label><input type="checkbox" class="ck" value="Không rủ rê"> Không rủ rê người khác</label><br>
+      <label><input type="checkbox" class="ck" value="Biết từ chối"> Biết từ chối</label><br>
+      <label><input type="checkbox" class="ck" value="Biết tìm trợ giúp"> Biết tìm trợ giúp</label><br>
+      <label><input type="checkbox" class="ck" value="Chia sẻ thông tin có kiểm chứng"> Chia sẻ thông tin có kiểm chứng</label>
+    </div>
+    <button class="btn red" onclick="makeCertificate()">Tôi cam kết</button>
+    <div id="certificate"></div>
+  </div>
+</section>
+
+<section id="teacher" class="view">
+  <h2 class="section-title">Bảng điều khiển giáo viên</h2>
+  <div class="stat-grid">
+    <div class="stat"><b id="stVisits">0</b>Lượt mở app</div>
+    <div class="stat"><b id="stQuiz">0</b>Lượt hoàn thành quiz</div>
+    <div class="stat"><b id="stAvg">0</b>Điểm quiz TB</div>
+    <div class="stat"><b id="stCommit">0</b>Lượt cam kết</div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>Xuất báo cáo</h3>
+    <p>Nhấn nút dưới đây để tạo bản báo cáo, sau đó chọn <b>Save as PDF / Lưu dưới dạng PDF</b> trong cửa sổ in của trình duyệt.</p>
+    <button class="btn red" onclick="prepareReport()">Tải / xuất PDF</button>
+  </div>
+</section>
+
+<section id="report" class="view">
+  <h2 style="text-align:center;color:var(--navy)">BÁO CÁO HOẠT ĐỘNG TUYÊN TRUYỀN PHÒNG, CHỐNG MA TÚY</h2>
+  <p style="text-align:center"><b>Khối 10 – Trường THPT Huỳnh Văn Nghệ</b></p>
+  <div class="card">
+    <h3>1. Thông tin tổng hợp</h3>
+    <div id="reportStats"></div>
+    <h3>2. Danh sách học sinh</h3>
+    <div id="reportStudents"></div>
+    <h3>3. Ghi nhận hoạt động</h3>
+    <p>Học sinh được tham gia các nội dung: nhận diện quan niệm sai, tình huống tương tác, kỹ năng từ chối, trò chơi kiến thức, góc viết thuyết phục và cam kết lựa chọn lối sống lành mạnh.</p>
+  </div>
+</section>
+
+<div class="footer no-print">
+  <b>TRƯỜNG THPT HUỲNH VĂN NGHỆ • KHỐI 10</b><br>
+  Kiến thức đúng • Lối sống lành mạnh • Cộng đồng an toàn • Tương lai tươi sáng
+</div>
+</main>
+
+<script>
+let soundOn=true, audioCtx=null;
+function playTone(type){
+ if(!soundOn)return;
+ try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();
+ const notes=type==='correct'?[660,880]:type==='wrong'?[330,260]:[523,659,784,1046];
+ notes.forEach((f,i)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain(),now=audioCtx.currentTime+i*.13;o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.11,now+.015);g.gain.exponentialRampToValueAtTime(.0001,now+.18);o.connect(g);g.connect(audioCtx.destination);o.start(now);o.stop(now+.19);});
+ }catch(e){/* sound unavailable */}
+}
+function toggleSound(){soundOn=!soundOn;document.getElementById('soundToggle').textContent=soundOn?'🔊 Âm thanh: Bật':'🔇 Âm thanh: Tắt'}
+
+const mythData=[
+["“Thử một lần cho biết” là chuyện nhỏ, không cần quan tâm.","Sai","Đây là quan niệm cần bác bỏ. Lựa chọn an toàn là không thử, không dùng và tránh xa tình huống nguy cơ."],
+["Mọi thông tin do AI đưa ra đều có thể dùng ngay trong bài viết.","Sai","Cần kiểm chứng với nguồn đáng tin cậy, nhất là số liệu và khẳng định quan trọng."],
+["Khi bị ép buộc, nên nói “không” rõ ràng và rời khỏi tình huống.","Đúng","Đây là cách ứng xử an toàn, đồng thời nên tìm người lớn hoặc nguồn hỗ trợ phù hợp."],
+["Thông tin trên mạng có nhiều lượt chia sẻ thì chắc chắn đúng.","Cần kiểm chứng","Mức độ lan truyền không thay thế cho độ tin cậy của nguồn."]
+];
+const scenarios=[
+{t:"Một người bạn nói: “Thử một lần thôi, không sao đâu.”",c:[
+["Đồng ý cho khỏi mất lòng",false,"Không an toàn. Đừng đánh đổi sức khỏe và quyền tự chủ vì áp lực bạn bè."],
+["Nói “Không, mình không dùng thứ đó”, rồi rời đi",true,"Lựa chọn tốt: rõ ràng, dứt khoát và giảm nguy cơ."],
+["Ở lại tranh cãi thật lâu",false,"Không nên kéo dài trong môi trường có nguy cơ. Ưu tiên rời đi an toàn."]
+]},
+{t:"Em thấy một bạn bị ép thử chất lạ trong buổi tụ tập.",c:[
+["Quay video đăng mạng",false,"Không nên làm tăng nguy cơ hoặc xâm phạm quyền riêng tư."],
+["Tìm người lớn đáng tin cậy để hỗ trợ",true,"Đúng. Hỗ trợ bạn bằng cách kết nối với người có trách nhiệm."],
+["Mặc kệ vì không liên quan",false,"Bỏ mặc có thể khiến bạn tiếp tục ở trong tình huống nguy hiểm."]
+]},
+{t:"Một thông tin trên mạng nói rằng 'dùng một lần không thể gây hậu quả'.",c:[
+["Tin ngay vì có nhiều lượt thích",false,"Lượt thích không phải bằng chứng về độ tin cậy."],
+["Kiểm tra nguồn, đối chiếu thêm nguồn đáng tin cậy",true,"Đúng. Đây là kỹ năng số quan trọng."],
+["Sao chép nguyên văn vào bài viết",false,"Không nên dùng thông tin chưa kiểm chứng."]
+]}
+];
+const quiz=[
+["Khi bị rủ rê sử dụng chất lạ, hành động phù hợp nhất là gì?",["Nói không và rời đi","Thử một lần","Ở lại xem người khác dùng"],0],
+["Thông tin AI cung cấp nên được xử lí thế nào?",["Tin ngay","Kiểm chứng trước khi dùng","Sao chép nguyên văn"],1],
+["Trong bài văn thuyết phục, bằng chứng cần như thế nào?",["Đáng tin cậy","Càng giật gân càng tốt","Không cần nguồn"],0],
+["Nếu người khác tiếp tục ép buộc sau khi em từ chối?",["Rời khỏi tình huống và tìm trợ giúp","Nhượng bộ","Giấu kín mãi"],0],
+["Một câu từ chối tốt nên có đặc điểm gì?",["Rõ ràng, dứt khoát, an toàn","Mơ hồ","Kích động"],0],
+["Khi tìm số liệu trên Internet, nên làm gì?",["Đối chiếu nguồn","Chọn nguồn đầu tiên","Chỉ xem tiêu đề"],0],
+["AI trong học tập nên đóng vai trò gì?",["Hỗ trợ gợi ý, con người kiểm soát","Làm thay toàn bộ","Thay thế trách nhiệm người học"],0],
+["Khi viết về phòng chống ma túy, nên tránh điều gì?",["Mô tả chi tiết gây tò mò","Lời khuyên an toàn","Nguồn đáng tin cậy"],0],
+["Khi hỗ trợ bạn trong tình huống nguy cơ, nên làm gì?",["Kết nối với người lớn đáng tin cậy","Chê bai bạn","Đăng thông tin của bạn lên mạng"],0],
+["Thông điệp phù hợp nhất là?",["Không thử – Không dùng – Biết từ chối – Tìm trợ giúp","Thử để biết","Chỉ cần cẩn thận là đủ"],0]
+];
+
+function show(id){
+ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+ document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});
+ if(id==='teacher')loadStats(); if(id==='students')renderStudents(); if(id==='media')renderGallery();
+}
+function renderMyths(){
+ mythList.innerHTML=mythData.map((m,i)=>`<div class="card"><h3>Quan niệm ${i+1}</h3><p>${m[0]}</p>
+ <button class="choice" onclick="mythAnswer(${i},'Đúng')">Đúng</button>
+ <button class="choice" onclick="mythAnswer(${i},'Sai')">Sai</button>
+ <button class="choice" onclick="mythAnswer(${i},'Cần kiểm chứng')">Cần kiểm chứng</button>
+ <div id="mythfb${i}" class="feedback" style="display:none"></div></div>`).join('');
+}
+function mythAnswer(i,a){let m=mythData[i],f=document.getElementById('mythfb'+i);f.style.display='block';f.innerHTML=`<b>${a===m[1]?'✓ Phù hợp':'↺ Hãy xem lại'}:</b> ${m[2]}`}
+let sc=0;
+function renderScenario(){let s=scenarios[sc];scenarioText.textContent=s.t;scenarioChoices.innerHTML=s.c.map((x,i)=>`<button class="choice" onclick="pickScenario(${i})">${x[0]}</button>`).join('');scenarioFeedback.style.display='none'}
+function pickScenario(i){let x=scenarios[sc].c[i];scenarioFeedback.style.display='block';scenarioFeedback.innerHTML=`<b>${x[1]?'✓ Lựa chọn an toàn':'⚠ Chưa phù hợp'}:</b> ${x[2]}`}
+function nextScenario(){sc=(sc+1)%scenarios.length;renderScenario()}
+function analyzeRefusal(){
+ let t=refuseInput.value.trim();if(!t)return;
+ let p=0,n=[];if(/không/i.test(t)){p++;n.push("✓ Có lời từ chối rõ ràng")}else n.push("• Nên dùng từ “không” rõ ràng");
+ if(/đi|rời|về|tránh/i.test(t)){p++;n.push("✓ Có ý rời tình huống")}else n.push("• Có thể bổ sung việc rời khỏi tình huống");
+ if(/thầy|cô|cha|mẹ|người lớn|giúp|hỗ trợ/i.test(t)){p++;n.push("✓ Có ý tìm trợ giúp")}else n.push("• Nếu bị ép buộc, nên tìm người lớn đáng tin cậy");
+ refuseResult.style.display='block';refuseResult.innerHTML=`<b>Mức độ ${p}/3</b><br>${n.join("<br>")}`;
+}
+let qi=0,qs=0,answered=false;
+function renderQuiz(){if(qi>=quiz.length){finishQuiz();return};answered=false;let q=quiz[qi];quizCounter.textContent=`Câu ${qi+1}/${quiz.length}`;quizBar.style.width=`${qi/quiz.length*100}%`;quizQuestion.textContent=q[0];quizChoices.innerHTML=q[1].map((x,i)=>`<button class="choice" onclick="answerQuiz(${i})">${x}</button>`).join('');quizFeedback.style.display='none';quizNext.style.display='none'}
+function answerQuiz(i){if(answered)return;answered=true;let q=quiz[qi],ok=i===q[2];if(ok)qs++;playTone(ok?'correct':'wrong');quizFeedback.style.display='block';quizFeedback.textContent=ok?'✓ Chính xác!':'✗ Chưa đúng. Hãy ưu tiên lựa chọn an toàn và có kiểm chứng.';quizNext.style.display='inline-block'}
+function nextQuiz(){qi++;renderQuiz()}
+function finishQuiz(){quizBar.style.width='100%';quizQuestion.textContent='Hoàn thành!';quizChoices.innerHTML='';quizNext.style.display='none';playTone('finish');quizFinal.innerHTML=`<div class="bigscore">${qs}/10</div><button class="btn soft" onclick="resetQuiz()">Chơi lại</button>`;let a=JSON.parse(localStorage.getItem('quizScores')||'[]');a.push(qs);localStorage.setItem('quizScores',JSON.stringify(a.slice(-200)))}
+function resetQuiz(){qi=0;qs=0;quizFinal.innerHTML='';renderQuiz()}
+function buildOutline(){let vals=[1,2,3,4,5,6].map(i=>document.getElementById('w'+i).value.trim()),labs=["1. VẤN ĐỀ","2. LUẬN ĐIỂM","3. LÍ LẼ","4. BẰNG CHỨNG / NGUỒN","5. BÁC BỎ QUAN NIỆM SAI","6. GIẢI PHÁP / LỜI KÊU GỌI"];outline.textContent=`ĐỀ: ${topic.value}\n\n`+labs.map((l,i)=>`${l}\n${vals[i]||"(chưa nhập)"}`).join("\n\n")}
+function saveWriting(){let d={topic:topic.value};for(let i=1;i<=6;i++)d['w'+i]=document.getElementById('w'+i).value;localStorage.setItem('writingDraft',JSON.stringify(d));alert('Đã lưu nội dung.')}
+function clearWriting(){for(let i=1;i<=6;i++)document.getElementById('w'+i).value='';outline.textContent=''}
+function previewPoster(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{posterPreview.src=r.result;posterPreview.style.display='block';posterHint.style.display='none'};r.readAsDataURL(f)}
+function savePoster(){if(!posterPreview.src)return alert('Hãy chọn ảnh trước.');let arr=JSON.parse(localStorage.getItem('mediaGallery')||'[]');arr.unshift({src:posterPreview.src,cap:posterCaption.value||'Ảnh tuyên truyền'});if(arr.length>8)arr=arr.slice(0,8);localStorage.setItem('mediaGallery',JSON.stringify(arr));renderGallery();alert('Đã lưu vào góc tư liệu.')}
+function renderGallery(){let arr=JSON.parse(localStorage.getItem('mediaGallery')||'[]');mediaGallery.innerHTML=arr.length?arr.map((x,i)=>`<div class="card"><img src="${x.src}" style="width:100%;border-radius:12px"><p>${esc(x.cap)}</p><button class="btn outline" onclick="delMedia(${i})">Xóa</button></div>`).join(''):'<p class="small">Chưa có ảnh nào được lưu.</p>'}
+function delMedia(i){let arr=JSON.parse(localStorage.getItem('mediaGallery')||'[]');arr.splice(i,1);localStorage.setItem('mediaGallery',JSON.stringify(arr));renderGallery()}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function getStudents(){return JSON.parse(localStorage.getItem('students')||'[]')}
+function addStudent(){let n=hsName.value.trim(),c=hsClass.value.trim();if(!n||!c)return alert('Nhập họ tên và lớp.');let a=getStudents();a.push({name:n,cls:c,status:hsStatus.value,note:hsNote.value.trim()});localStorage.setItem('students',JSON.stringify(a));hsName.value='';hsClass.value='';hsNote.value='';renderStudents()}
+function renderStudents(){let a=getStudents(),tb=document.querySelector('#studentTable tbody');tb.innerHTML=a.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.name)}</td><td>${esc(x.cls)}</td><td>${esc(x.status)}</td><td>${esc(x.note||'')}</td><td class="no-print"><button class="btn outline" onclick="delStudent(${i})">Xóa</button></td></tr>`).join('')}
+function delStudent(i){let a=getStudents();a.splice(i,1);localStorage.setItem('students',JSON.stringify(a));renderStudents()}
+function clearStudents(){if(confirm('Xóa toàn bộ danh sách?')){localStorage.removeItem('students');renderStudents()}}
+function exportExcel(){
+ let a=getStudents();if(!a.length)return alert('Danh sách đang trống.');
+ let rows=[["STT","Họ và tên","Lớp","Trạng thái","Ghi chú"],...a.map((x,i)=>[i+1,x.name,x.cls,x.status,x.note||""])];
+ let html='<table>'+rows.map(r=>'<tr>'+r.map(c=>'<td>'+String(c).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</td>').join('')+'</tr>').join('')+'</table>';
+ let blob=new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel'}),url=URL.createObjectURL(blob),ael=document.createElement('a');
+ ael.href=url;ael.download='Danh_sach_hoc_sinh_khoi_10_THPT_Huynh_Van_Nghe.xls';ael.click();URL.revokeObjectURL(url);
+}
+function makeCertificate(){let cs=[...document.querySelectorAll('.ck:checked')].map(x=>x.value);if(!cs.length)return alert('Hãy chọn ít nhất một cam kết.');let name=studentName.value.trim()||'Học sinh ẩn danh';certificate.innerHTML=`<div class="certificate"><div style="font-size:44px">🏅</div><h2>TÔI CHỌN TƯƠNG LAI</h2><h3>TÔI NÓI KHÔNG VỚI MA TÚY</h3><p><b>${esc(name)}</b></p><p>${cs.map(esc).join(' • ')}</p><p>Khối 10 – Trường THPT Huỳnh Văn Nghệ</p><div class="small">${new Date().toLocaleDateString('vi-VN')}</div></div>`;localStorage.setItem('commitCount',Number(localStorage.getItem('commitCount')||0)+1)}
+function loadStats(){let v=Number(localStorage.getItem('visits')||0),s=JSON.parse(localStorage.getItem('quizScores')||'[]'),c=Number(localStorage.getItem('commitCount')||0);stVisits.textContent=v;stQuiz.textContent=s.length;stAvg.textContent=s.length?(s.reduce((a,b)=>a+b,0)/s.length).toFixed(1):0;stCommit.textContent=c}
+function prepareReport(){
+ let s=JSON.parse(localStorage.getItem('quizScores')||'[]'),avg=s.length?(s.reduce((a,b)=>a+b,0)/s.length).toFixed(1):0,a=getStudents();
+ reportStats.innerHTML=`<p>Lượt mở app: <b>${localStorage.getItem('visits')||0}</b></p><p>Lượt hoàn thành quiz: <b>${s.length}</b></p><p>Điểm quiz trung bình: <b>${avg}/10</b></p><p>Lượt cam kết: <b>${localStorage.getItem('commitCount')||0}</b></p>`;
+ reportStudents.innerHTML=a.length?'<table class="student-table"><tr><th>STT</th><th>Họ và tên</th><th>Lớp</th><th>Trạng thái</th><th>Ghi chú</th></tr>'+a.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.name)}</td><td>${esc(x.cls)}</td><td>${esc(x.status)}</td><td>${esc(x.note||'')}</td></tr>`).join('')+'</table>':'<p>Chưa có dữ liệu học sinh.</p>';
+ show('report');setTimeout(()=>window.print(),250);
+}
+
+const API_MODELS={
+ gemini:["gemini-2.5-flash","gemini-2.5-pro","gemini-2.0-flash"],
+ openai:["gpt-5.6","gpt-5-mini","gpt-4.1-mini"]
+};
+function providerChanged(){
+ const p=document.getElementById('apiProvider').value;
+ const m=document.getElementById('apiModel');
+ m.innerHTML=API_MODELS[p].map(x=>`<option value="${x}">${x}</option>`).join('');
+ const saved=JSON.parse(sessionStorage.getItem('apiSettings')||'null');
+ if(saved && saved.provider===p && saved.model) m.value=saved.model;
+}
+function toggleKey(){
+ const el=document.getElementById('apiKey');
+ el.type=el.type==='password'?'text':'password';
+}
+function saveAPISettings(){
+ const s={
+  provider:document.getElementById('apiProvider').value,
+  model:document.getElementById('apiModel').value,
+  key:document.getElementById('apiKey').value.trim(),
+  systemPrompt:document.getElementById('systemPrompt').value.trim()
+ };
+ if(!s.key){alert('Hãy nhập API Key.');return}
+ sessionStorage.setItem('apiSettings',JSON.stringify(s));
+ setApiStatus('apiStatus',true,'API được giữ trong phiên tab hiện tại (không lưu lâu dài).');
+ setApiStatus('aiUseStatus',true,'Đã có API. Có thể sử dụng Cố vấn AI.');
+}
+function loadAPISettings(){
+ providerChanged();
+ const s=JSON.parse(sessionStorage.getItem('apiSettings')||'null');
+ if(!s){setApiStatus('aiUseStatus',true,'Cố vấn ngoại tuyến sẵn sàng — không cần API.');return;}
+ document.getElementById('apiProvider').value=s.provider||'gemini';
+ providerChanged();
+ document.getElementById('apiModel').value=s.model||API_MODELS[s.provider||'gemini'][0];
+ document.getElementById('apiKey').value=s.key||'';
+ if(s.systemPrompt)document.getElementById('systemPrompt').value=s.systemPrompt;
+ setApiStatus('aiUseStatus',!!s.key,s.key?'Đã có API. Có thể sử dụng Cố vấn AI.':'Chưa có API.');
+}
+function deleteAPISettings(){
+ if(confirm('Xóa khóa API đã lưu trên trình duyệt này?')){
+  sessionStorage.removeItem('apiSettings');
+  document.getElementById('apiKey').value='';
+  setApiStatus('apiStatus',false,'Đã xóa API.');
+  setApiStatus('aiUseStatus',true,'Đang dùng Cố vấn ngoại tuyến.');
+ }
+}
+function setApiStatus(id,ok,text){
+ const el=document.getElementById(id); if(!el)return;
+ el.innerHTML=`<span class="dot ${ok?'ok':'bad'}"></span><span>${text}</span>`;
+}
+function useQuickPrompt(){
+ const v=document.getElementById('quickPrompt').value;
+ if(v)document.getElementById('aiQuestion').value=v;
+}
+function addMsg(role,text){
+ const log=document.getElementById('chatLog');
+ const d=document.createElement('div');
+ d.className='msg '+role; d.textContent=text; log.appendChild(d); log.scrollTop=log.scrollHeight;
+}
+function clearChat(){
+ document.getElementById('chatLog').innerHTML='<div class="msg system">Hội thoại đã được xóa.</div>';
+}
+async function callGemini(s,userText){
+ const url=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(s.model)}:generateContent?key=${encodeURIComponent(s.key)}`;
+ const body={
+  system_instruction:{parts:[{text:s.systemPrompt||''}]},
+  contents:[{role:"user",parts:[{text:userText}]}],
+  generationConfig:{temperature:0.4,maxOutputTokens:1200}
+ };
+ const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+ const data=await r.json();
+ if(!r.ok)throw new Error(data?.error?.message||'Gemini API lỗi.');
+ return data?.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('') || 'AI không trả về nội dung.';
+}
+async function callOpenAI(s,userText){
+ const body={
+  model:s.model,
+  instructions:s.systemPrompt||'',
+  input:userText
+ };
+ const r=await fetch('https://api.openai.com/v1/responses',{
+  method:'POST',
+  headers:{'Content-Type':'application/json','Authorization':'Bearer '+s.key},
+  body:JSON.stringify(body)
+ });
+ const data=await r.json();
+ if(!r.ok)throw new Error(data?.error?.message||'OpenAI API lỗi.');
+ if(data.output_text)return data.output_text;
+ try{
+   return data.output.flatMap(x=>x.content||[]).map(x=>x.text||'').join('') || 'AI không trả về nội dung.';
+ }catch(e){return 'AI không trả về nội dung.'}
+}
+async function testAPI(){
+ const s=JSON.parse(sessionStorage.getItem('apiSettings')||'null');
+ if(!s?.key){setApiStatus('apiStatus',false,'Chưa có API Key. Hãy lưu cài đặt trước.');return}
+ setApiStatus('apiStatus',true,'Đang kiểm tra kết nối...');
+ try{
+   const txt=s.provider==='gemini'
+    ? await callGemini(s,'Trả lời đúng một câu ngắn: Kết nối API thành công.')
+    : await callOpenAI(s,'Trả lời đúng một câu ngắn: Kết nối API thành công.');
+   setApiStatus('apiStatus',true,'Kết nối thành công: '+txt.slice(0,120));
+   setApiStatus('aiUseStatus',true,'API hoạt động. Có thể sử dụng Cố vấn AI.');
+ }catch(err){
+   setApiStatus('apiStatus',false,'Kết nối thất bại: '+err.message);
+   setApiStatus('aiUseStatus',false,'API chưa hoạt động.');
+ }
+}
+function offlineAdvice(q){
+ const t=q.toLowerCase();
+ if(/ép|rủ rê|mời|thử|từ chối|nói không/.test(t)) return 'Em có thể nói rõ: “Không, mình không sử dụng chất lạ.” Sau đó rời khỏi nơi có nguy cơ, tìm bạn đồng hành an toàn và báo với cha mẹ, thầy cô hoặc người lớn đáng tin cậy. Nếu đang bị đe dọa hoặc gặp tình huống nguy hiểm, hãy ưu tiên đến nơi an toàn và gọi trợ giúp khẩn cấp phù hợp.';
+ if(/bài văn|dàn ý|nghị luận|thuyết phục|luận điểm|mở bài|kết bài/.test(t)) return 'Gợi ý dàn ý: (1) Nêu vấn đề và quan niệm sai cần bác bỏ; (2) Giải thích vì sao phải nói không với ma túy; (3) Lập luận về sức khỏe, tương lai và gia đình, dùng bằng chứng từ nguồn đáng tin cậy; (4) Phản biện câu “thử một lần không sao”; (5) Đề xuất cách từ chối, rời đi, tìm hỗ trợ; (6) Kết bằng lời kêu gọi. Em hãy tự diễn đạt, kiểm chứng số liệu trước khi sử dụng.';
+ if(/nguồn|kiểm chứng|thông tin|tin giả|ai/.test(t)) return 'Để kiểm chứng, hãy xác định nguồn phát hành, ngày công bố, đối chiếu ít nhất hai nguồn đáng tin cậy như cơ quan y tế, giáo dục hoặc cơ quan nhà nước. Không đưa số liệu chưa có nguồn vào bài và không tin chỉ vì nhiều lượt chia sẻ.';
+ if(/bạn|giúp đỡ|hỗ trợ|phát hiện|nghi ngờ/.test(t)) return 'Hãy lắng nghe không phán xét; không tự ý đối đầu hoặc đăng thông tin cá nhân của bạn lên mạng. Nên báo cho giáo viên, phụ huynh hoặc người có trách nhiệm để được hỗ trợ an toàn.';
+ return 'Cố vấn ngoại tuyến gợi ý 3 bước: 1) Nhận diện nguy cơ và không nhận chất không rõ nguồn gốc. 2) Nói “không” dứt khoát, rời khỏi tình huống thiếu an toàn. 3) Tìm thầy cô, cha mẹ hoặc người lớn đáng tin cậy để được giúp đỡ. Em có thể hỏi cụ thể về “cách từ chối”, “lập dàn ý bài văn”, hoặc “cách kiểm chứng thông tin”. Đây là gợi ý cố định, không phải AI tạo sinh.';
+}
+async function askAI(){
+ const q=document.getElementById('aiQuestion').value.trim();
+ if(!q){alert('Hãy nhập câu hỏi.');return}
+ const s=JSON.parse(sessionStorage.getItem('apiSettings')||'null');
+ if(!s?.key){addMsg('user',q);addMsg('ai',offlineAdvice(q));document.getElementById('aiQuestion').value='';setApiStatus('aiUseStatus',true,'Đang dùng Cố vấn ngoại tuyến (không cần API).');return}
+ addMsg('user',q); document.getElementById('aiQuestion').value='';
+ addMsg('ai','Đang suy nghĩ...');
+ const log=document.getElementById('chatLog'), temp=log.lastElementChild;
+ try{
+   const ans=s.provider==='gemini'?await callGemini(s,q):await callOpenAI(s,q);
+   temp.textContent=ans;
+   setApiStatus('aiUseStatus',true,'API đang hoạt động.');
+ }catch(err){
+   temp.textContent='Không thể nhận phản hồi: '+err.message;
+   setApiStatus('aiUseStatus',false,'Có lỗi khi gọi API.');
+ }
+}
+
+localStorage.setItem('visits',Number(localStorage.getItem('visits')||0)+1);
+renderMyths();renderScenario();renderQuiz();renderStudents();renderGallery();loadStats();loadAPISettings();
+</script>
+</body>
+</html>
